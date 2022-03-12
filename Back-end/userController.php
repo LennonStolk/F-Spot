@@ -11,7 +11,7 @@ if (isset($_POST["method"])) {
     $method = $_POST["method"];
 }
 else {
-    echo 'noMethodFound';
+    echo(json_encode('noMethodFound'));;
 }
 
 if ($method == "createAccount") {
@@ -30,13 +30,13 @@ if ($method == "logIn") {
 if ($method == "checkEmailExists") {
     $email = isset($_POST["email"]) ? $_POST["email"] : null;
 
-    echo checkEmailExists($db, $email);
+    echo json_encode(checkEmailExists($db, $email));
 }
 
 if ($method == "checkNameExists") {
     $userName = isset($_POST["userName"]) ? $_POST["userName"] : null;
 
-    echo checkNameExists($db, $userName);
+    echo json_encode(checkNameExists($db, $userName));
 }
 
 
@@ -73,35 +73,35 @@ function checkEmailExists($db, $email) {
 
 function createAccount($db, $userName, $email, $password) {
     if (anyEmpty([$userName, $email, $password])) {
-        echo 'emptyFields';
+        echo(json_encode('emptyFields'));
         die();
     } 
     elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo 'invalidEmail';
+        echo(json_encode('invalidEmail'));
         die();
     }
     elseif (strlen($userName) > 15) {
-        echo 'nameTooLong';
+        echo(json_encode('nameTooLong'));
         die();
     }
     elseif (strlen($email) > 50) {
-        echo 'emailTooLong';
+        echo(json_encode('emailTooLong'));
         die();
     }
     elseif (checkNameExists($db, $userName)) {
-        echo 'nameAlreadyExists';
+        echo(json_encode('nameAlreadyExists'));
         die();
     }
     elseif (checkEmailExists($db, $email)) {
-        echo 'emailAlreadyExists';
+        echo(json_encode('emailAlreadyExists'));
         die();
     }
     elseif (($password = password_hash($password, PASSWORD_DEFAULT)) == false) {
-        echo 'passwordCantBeHashed';
+        echo(json_encode('passwordCantBeHashed'));
         die();
     }
     elseif (checkLegalCharacters($userName, "abcdefghijklmnopqrstuvwxyz1234567890_-") == false) {
-        echo 'illegalCharacters';
+        echo(json_encode('illegalCharacters'));
         die();
     }
     else {
@@ -114,18 +114,18 @@ function createAccount($db, $userName, $email, $password) {
         $stmt = $db->prepare($sql);
         $stmt->execute($vars);
 
-        echo 'successfullyMadeAccount';
+        echo(json_encode('successfullyMadeAccount'));
         die();
     }
 }
 
 function logIn($db, $userName, $password) {
     if (anyEmpty([$userName, $password])) {
-        echo 'emptyFields';
+        echo(json_encode('emptyFields'));
         die();
     } 
     elseif (!checkNameExists($db, $userName)) {
-        echo 'nameDoesntExist';
+        echo(json_encode('nameDoesntExist'));
         die();
     }
     else {
@@ -133,11 +133,11 @@ function logIn($db, $userName, $password) {
         $passwordCorrect = password_verify($password, $dbHash);
 
         if ($passwordCorrect != 1) {
-            echo 'wrongPassword';
+            echo(json_encode('wrongPassword'));
             die();
         }
         else {
-            echo 'successfullyLoggedIn';
+            echo(json_encode('successfullyLoggedIn'));
             die();
         }
     }

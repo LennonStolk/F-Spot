@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1 id="pageTitle">Log In</h1>
-    <form class="basicForm" id="logInForm" action="userController.php" method="post">
+    <form class="basicForm" id="logInForm" action="http://lennonstolk.nl/apis/F-Spot/userController.php" method="post">
         <label for="userName">Username:</label>
         <input type="text" name="userName"><br><br>
         <label for="password">Password:</label>
@@ -18,7 +18,7 @@
     </form>
 
     <h1 id="pageTitle">Sign Up</h1>
-    <form class="basicForm" id="signUpForm" action="userController.php" method="post">
+    <form class="basicForm" id="signUpForm" action="http://lennonstolk.nl/apis/F-Spot/userController.php" method="post">
         <label for="userName">Username:</label>
         <input id="userName" type="text" name="userName" maxlength="15"><br><br>
         <label for="email">Email:</label>
@@ -133,7 +133,7 @@
             let formData = new FormData();
             formData.append('method', 'checkEmailExists');
             formData.append('email', email);
-            let response = await fetch("./userController.php", {
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/userController.php", {
                 method: 'POST',
                 body: formData
             });
@@ -147,7 +147,7 @@
             let formData = new FormData();
             formData.append('method', 'checkNameExists');
             formData.append('userName', userName);
-            let response = await fetch("./userController.php", {
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/userController.php", {
                 method: 'POST',
                 body: formData
             });
