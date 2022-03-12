@@ -1,5 +1,8 @@
 <?php
 
+// Enables CORS
+header("Access-Control-Allow-Origin: *");
+
 // Adds validation functions that are needed
 include_once "./validationFunctions.php";
 
