@@ -7,29 +7,33 @@
     <title>Document</title>
 </head>
 <body>
-    <h1 id="pageTitle">Log In</h1>
-    <form class="basicForm" id="logInForm" action="http://lennonstolk.nl/apis/F-Spot/userController.php" method="post">
-        <label for="userName">Username:</label>
-        <input type="text" name="userName"><br><br>
-        <label for="password">Password:</label>
-        <input type="text" name="password"><br><br>
-        <input type="hidden" name="method" value="logIn">
-        <input type="submit" value="Log in">
-    </form>
 
-    <h1 id="pageTitle">Sign Up</h1>
-    <form class="basicForm" id="signUpForm" action="http://lennonstolk.nl/apis/F-Spot/userController.php" method="post">
-        <label for="userName">Username:</label>
-        <input id="userName" type="text" name="userName" maxlength="15"><br><br>
-        <label for="email">Email:</label>
-        <input id="email" type="text" id="email" name="email"><br><br>
-        <label for="password">Password:</label>
-        <input id="password" type="text" id="password" name="password" maxlength="50"><br><br>
-        <input type="hidden" name="method" value="createAccount">
-        <input id="submit" type="submit" value="Create account" disabled="">
-    </form>
-
-    <div id="errorDiv"></div>
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px;">
+        <h1 id="pageTitle">Log In</h1>
+        <form class="basicForm" id="logInForm" action="http://lennonstolk.nl/apis/F-Spot/userController.php" method="post">
+            <label for="userName">Username:</label>
+            <input type="text" name="userName"><br><br>
+            <label for="password">Password:</label>
+            <input type="text" name="password"><br><br>
+            <input type="hidden" name="method" value="logIn">
+            <input type="submit" value="Log in">
+        </form>
+    </section>
+    
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px;">
+        <h1 id="pageTitle">Sign Up</h1>
+        <form class="basicForm" id="signUpForm" action="http://lennonstolk.nl/apis/F-Spot/userController.php" method="post">
+            <label for="userName">Username:</label>
+            <input id="userName" type="text" name="userName" maxlength="15"><br><br>
+            <label for="email">Email:</label>
+            <input id="email" type="text" id="email" name="email"><br><br>
+            <label for="password">Password:</label>
+            <input id="password" type="text" id="password" name="password" maxlength="50"><br><br>
+            <input type="hidden" name="method" value="createAccount">
+            <input id="submit" type="submit" value="Create account" disabled="">
+        </form>
+        <div id="errorDiv" style="color: red;"></div>
+    </section>
 
     <script defer>
         let errorList = new Set();
@@ -138,7 +142,6 @@
                 body: formData
             });
             let emailExists = await response.json();
-            console.log(emailExists);
 
             return emailExists;
         }
