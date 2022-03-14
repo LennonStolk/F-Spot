@@ -9,15 +9,20 @@
 <body>
 
     <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px;">
+        <img src="TestingPage logo.png" width="400px" alt="">
+    </section>
+
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px;">
         <h1 id="pageTitle">Log In</h1>
-        <form class="basicForm" id="logInForm" action="http://lennonstolk.nl/apis/F-Spot/userController.php" method="post">
+        <form class="basicForm" id="logInForm" onsubmit="event.preventDefault();">
             <label for="userName">Username:</label>
-            <input type="text" name="userName"><br><br>
+            <input type="text" name="userName" id="loginUsername"><br><br>
             <label for="password">Password:</label>
-            <input type="text" name="password"><br><br>
-            <input type="hidden" name="method" value="logIn">
-            <input type="submit" value="Log in">
+            <input type="text" name="password" id="loginPassword"><br><br>
         </form>
+        <button onclick="logIn()">Log In</button>
+        <button onclick="logOut()">Log out</button>
+        <h4 id="logInStatusDiv" style="color: green;"></h4>
     </section>
     
     <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px;">
@@ -37,6 +42,9 @@
 
     <script defer>
         let errorList = new Set();
+        let loggedIn = false;
+        let currentUsername = "";
+        let currentPassword = "";
         setUpValidation();
 
 
@@ -157,6 +165,37 @@
             let userNameExists = await response.json();
 
             return userNameExists;
+        }
+
+        async function logIn() {
+            let userName = document.querySelector("#loginUsername").value;
+            let password = document.querySelector("#loginPassword").value;
+            
+            let formData = new FormData();
+            formData.append('method', 'logIn');
+            formData.append('userName', userName);
+            formData.append('password', password);
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/userController.php", {
+                method: 'POST',
+                body: formData
+            });
+            response = await response.json();
+
+            if (response == "successfullyLoggedIn") {
+                loggedIn = true;
+                currentUsername = userName;
+                currentPassword = password;
+                document.querySelector("#logInStatusDiv").innerText = `Currently logged in as user: ${userName}`;
+            }
+
+            return userNameExists;
+        }
+
+        function logOut() {
+            loggedIn = false;
+            currentUsername = "";
+            currentPassword = "";
+            document.querySelector("#logInStatusDiv").innerText = "";
         }
 
         function updateErrorList() {
