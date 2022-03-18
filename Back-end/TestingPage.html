@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
+<body style="margin: 0; width: 100vw; height: 100vh; display: flex; flex-flow: column wrap; place-content: start;">
 
     <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px;">
         <img src="TestingPage logo.png" width="400px" alt="">
@@ -38,6 +38,15 @@
             <input id="submit" type="submit" value="Create account" disabled="">
         </form>
         <div id="errorDiv" style="color: red;"></div>
+    </section>
+
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="playlistsSection">
+        <h1 id="pageTitle">Playlists</h1>
+        <form class="basicForm" id="logInForm" onsubmit="event.preventDefault();">
+            <label for="userName">Playlist name:</label>
+            <input type="text" name="userName" id="addPlaylistName"><br><br>
+        </form>
+        <button onclick="addPlaylist()">Add playlist</button>
     </section>
 
     <script defer>
@@ -186,9 +195,27 @@
                 currentUsername = userName;
                 currentPassword = password;
                 document.querySelector("#logInStatusDiv").innerText = `Currently logged in as user: ${userName}`;
+                document.querySelector("#playlistsSection").style.display = "block";
             }
+        }
 
-            return userNameExists;
+        async function addPlaylist() {
+            let playlistName = document.querySelector("#addPlaylistName").value;
+            
+            let formData = new FormData();
+            formData.append('method', 'createPlaylist');
+            formData.append('userName', currentUsername);
+            formData.append('password', currentPassword);
+            formData.append('playlistName', playlistName);
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/playlistController.php", {
+                method: 'POST',
+                body: formData
+            });
+            response = await response.json();
+
+            if (response == "successfullyMadePlaylist") {
+                alert("done");
+            }
         }
 
         function logOut() {
@@ -196,6 +223,7 @@
             currentUsername = "";
             currentPassword = "";
             document.querySelector("#logInStatusDiv").innerText = "";
+            document.querySelector("#playlistsSection").style.display = "none";
         }
 
         function updateErrorList() {
