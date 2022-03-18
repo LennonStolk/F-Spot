@@ -17,7 +17,7 @@ else {
     echo(json_encode('noMethodFound'));;
 }
 
-if ($method = "createPlaylist") {
+if ($method == "createPlaylist") {
     $userName = isset($_POST["userName"]) ? $_POST["userName"] : null;
     $password = isset($_POST["password"]) ? $_POST["password"] : null;
     $playlistName = isset($_POST["playlistName"]) ? $_POST["playlistName"] : null;
@@ -28,6 +28,17 @@ if ($method = "createPlaylist") {
     }
 
     createPlaylist($db, $userName, $playlistName);
+}
+elseif ($method == "getPlaylists") {
+    $userName = isset($_POST["userName"]) ? $_POST["userName"] : null;
+    $password = isset($_POST["password"]) ? $_POST["password"] : null;
+
+    if (authenticate($db, $userName, $password) == false) {
+        echo(json_encode('authenticationFailed'));
+        die();
+    }
+
+    getPlaylists($db, $userName);
 }
 
 function createPlaylist($db, $userName, $playlistName) {
@@ -57,7 +68,29 @@ function createPlaylist($db, $userName, $playlistName) {
     $stmt = $db->prepare($sql);
     $stmt->execute($vars);
 
-    echo(json_encode('successfullyMadePlaylist'));
+    // Get inserted playlist
+    $sql = 'SELECT * FROM fspot_playlists WHERE id = :id';
+    $vars = ["id" => $db->lastInsertId()];
+    $stmt = $db->prepare($sql);
+    $stmt->execute($vars);
+    $result = $stmt->fetch();
+
+    echo(json_encode($result));
+    die();
+}
+
+function getPlaylists($db, $userName) {
+    // Get id from user
+    $userId = getIdFromUserName($db, $userName);
+
+    // Get playlists
+    $sql = 'SELECT * FROM fspot_playlists WHERE userId = :userId';
+    $vars = ["userId" => $userId];
+    $stmt = $db->prepare($sql);
+    $stmt->execute($vars);
+    $result = $stmt->fetchAll();
+
+    echo(json_encode($result));
     die();
 }
 

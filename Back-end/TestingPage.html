@@ -196,6 +196,7 @@
                 currentPassword = password;
                 document.querySelector("#logInStatusDiv").innerText = `Currently logged in as user: ${userName}`;
                 document.querySelector("#playlistsSection").style.display = "block";
+                await getPlaylists();
             }
         }
 
@@ -216,6 +217,19 @@
             if (response == "successfullyMadePlaylist") {
                 alert("done");
             }
+        }
+
+        async function getPlaylists() {
+            let formData = new FormData();
+            formData.append('method', 'getPlaylists');
+            formData.append('userName', currentUsername);
+            formData.append('password', currentPassword);
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/playlistController.php", {
+                method: 'POST',
+                body: formData
+            });
+            response = await response.json();
+            console.log(response);
         }
 
         function logOut() {
