@@ -40,6 +40,18 @@ elseif ($method == "getPlaylists") {
 
     getPlaylists($db, $userName);
 }
+elseif ($method == "removePlaylist") {
+    $userName = isset($_POST["userName"]) ? $_POST["userName"] : null;
+    $password = isset($_POST["password"]) ? $_POST["password"] : null;
+    $playlistId = isset($_POST["playlistId"]) ? $_POST["playlistId"] : null;
+
+    if (authenticate($db, $userName, $password) == false) {
+        echo(json_encode('authenticationFailed'));
+        die();
+    }
+
+    removePlaylist($db, $userName, $playlistId);
+}
 
 function createPlaylist($db, $userName, $playlistName) {
     // Check conditions
@@ -91,6 +103,23 @@ function getPlaylists($db, $userName) {
     $result = $stmt->fetchAll();
 
     echo(json_encode($result));
+    die();
+}
+
+function removePlaylist($db, $userName, $id) {
+    // Get id from user
+    $userId = getIdFromUserName($db, $userName);
+
+    // Get playlists
+    $sql = 'DELETE FROM fspot_playlists WHERE userId = :userId AND id = :id';
+    $vars = [
+        "userId" => $userId,
+        "id" => $id,
+    ];
+    $stmt = $db->prepare($sql);
+    $stmt->execute($vars);
+
+    echo(json_encode("successfullyRemoved"));
     die();
 }
 
