@@ -44,9 +44,10 @@
         <h1 id="pageTitle">Playlists</h1>
         <form class="basicForm" id="logInForm" onsubmit="event.preventDefault();">
             <label for="userName">Playlist name:</label>
-            <input type="text" name="userName" id="addPlaylistName"><br><br>
+            <input type="text" name="userName" id="addPlaylistName" maxlength="15">
+            <button onclick="addPlaylist()">Add playlist</button>
         </form>
-        <button onclick="addPlaylist()">Add playlist</button>
+        
         <div id="playlistsDiv" style="color: blue;"></div>
     </section>
 
@@ -239,21 +240,49 @@
             }
         }
 
+        async function removePlaylist(playlistId) {
+            let formData = new FormData();
+            formData.append('method', 'removePlaylist');
+            formData.append('userName', currentUsername);
+            formData.append('password', currentPassword);
+            formData.append('playlistId', playlistId);
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/playlistController.php", {
+                method: 'POST',
+                body: formData
+            });
+            response = await response.json();
+
+            if (response == "successfullyRemoved") {
+                document.querySelector(`#playlist-${playlistId}`).remove();
+            }
+        }
+
         function logOut() {
             loggedIn = false;
             currentUsername = "";
             currentPassword = "";
             document.querySelector("#logInStatusDiv").innerText = "";
             document.querySelector("#playlistsSection").style.display = "none";
+            document.querySelector("#playlistsDiv").innerHTML = "";
         }
 
         function displayPlaylistRow(row) {
             let playlistsDiv = document.querySelector("#playlistsDiv");
+
             let playlist = document.createElement("div");
             playlist.style.padding = "3px";
             playlist.style.border = "1px solid blue";
             playlist.style.margin = "2px";
+            playlist.style.color = "blue";
+            playlist.id = `playlist-${row.id}`;
             playlist.innerText = row.name;
+
+            let deleteBtn = document.createElement("button");
+            deleteBtn.innerText = "Delete";
+            deleteBtn.style.float = "right";
+            deleteBtn.onclick = () => removePlaylist(row.id);
+
+            playlist.appendChild(deleteBtn);
             playlistsDiv.appendChild(playlist);
         }
 
