@@ -47,6 +47,7 @@
             <input type="text" name="userName" id="addPlaylistName"><br><br>
         </form>
         <button onclick="addPlaylist()">Add playlist</button>
+        <div id="playlistsDiv" style="color: blue;"></div>
     </section>
 
     <script defer>
@@ -214,8 +215,8 @@
             });
             response = await response.json();
 
-            if (response == "successfullyMadePlaylist") {
-                alert("done");
+            if (typeof response === "object" && response !== null) {
+                displayPlaylistRow(response);
             }
         }
 
@@ -229,7 +230,13 @@
                 body: formData
             });
             response = await response.json();
-            console.log(response);
+
+            if (Array.isArray(response)) {
+                document.querySelector("#playlistsDiv").innerHTML = "";
+                response.forEach((row) => {
+                    displayPlaylistRow(row);
+                });
+            }
         }
 
         function logOut() {
@@ -238,6 +245,16 @@
             currentPassword = "";
             document.querySelector("#logInStatusDiv").innerText = "";
             document.querySelector("#playlistsSection").style.display = "none";
+        }
+
+        function displayPlaylistRow(row) {
+            let playlistsDiv = document.querySelector("#playlistsDiv");
+            let playlist = document.createElement("div");
+            playlist.style.padding = "3px";
+            playlist.style.border = "1px solid blue";
+            playlist.style.margin = "2px";
+            playlist.innerText = row.name;
+            playlistsDiv.appendChild(playlist);
         }
 
         function updateErrorList() {
