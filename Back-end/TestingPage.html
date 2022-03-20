@@ -51,6 +51,11 @@
         <div id="playlistsDiv" style="color: blue;"></div>
     </section>
 
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="songsSection">
+        <h1 id="pageTitle">All Songs</h1>
+        <div id="songsDiv" style="color: blue;"></div>
+    </section>
+
     <script defer>
         let errorList = new Set();
         let loggedIn = false;
@@ -198,7 +203,9 @@
                 currentPassword = password;
                 document.querySelector("#logInStatusDiv").innerText = `Currently logged in as user: ${userName}`;
                 document.querySelector("#playlistsSection").style.display = "block";
+                document.querySelector("#songsSection").style.display = "block";
                 await getPlaylists();
+                await getSongs();
             }
         }
 
@@ -240,6 +247,25 @@
             }
         }
 
+        async function getSongs() {
+            let formData = new FormData();
+            formData.append('method', 'getSongs');
+            formData.append('userName', currentUsername);
+            formData.append('password', currentPassword);
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/songController.php", {
+                method: 'POST',
+                body: formData
+            });
+            response = await response.json();
+
+            if (Array.isArray(response)) {
+                document.querySelector("#songsDiv").innerHTML = "";
+                response.forEach((row) => {
+                    displaySongRow(row);
+                });
+            }
+        }
+
         async function removePlaylist(playlistId) {
             let formData = new FormData();
             formData.append('method', 'removePlaylist');
@@ -264,6 +290,8 @@
             document.querySelector("#logInStatusDiv").innerText = "";
             document.querySelector("#playlistsSection").style.display = "none";
             document.querySelector("#playlistsDiv").innerHTML = "";
+            document.querySelector("#songsSection").style.display = "none";
+            document.querySelector("#songsDiv").innerHTML = "";
         }
 
         function displayPlaylistRow(row) {
@@ -284,6 +312,20 @@
 
             playlist.appendChild(deleteBtn);
             playlistsDiv.appendChild(playlist);
+        }
+
+        function displaySongRow(row) {
+            let songsDiv = document.querySelector("#songsDiv");
+
+            let song = document.createElement("div");
+            song.style.padding = "3px";
+            song.style.border = "1px solid black";
+            song.style.margin = "2px";
+            song.style.color = "black";
+            song.id = `song-${row.id}`;
+            song.innerText = `${row.artist} - ${row.name}`;
+
+            songsDiv.appendChild(song);
         }
 
         function updateErrorList() {
