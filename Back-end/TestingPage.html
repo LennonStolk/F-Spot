@@ -40,8 +40,13 @@
         <div id="errorDiv" style="color: red;"></div>
     </section>
 
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="songsSection">
+        <h1 id="pageTitle">All Songs</h1>
+        <div id="songsDiv" style="color: blue;"></div>
+    </section>
+
     <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="playlistsSection">
-        <h1 id="pageTitle">Playlists</h1>
+        <h1 id="pageTitle">Your Playlists</h1>
         <form class="basicForm" id="logInForm" onsubmit="event.preventDefault();">
             <label for="userName">Playlist name:</label>
             <input type="text" name="userName" id="addPlaylistName" maxlength="15">
@@ -52,14 +57,11 @@
     </section>
 
     <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="playlistEntriesSection">
-        <h1 id="pageTitle">Playlist entries</h1>
+        <h1 id="pageTitle">Playlist Entries</h1>
         <div id="playlistEntriesDiv" style="color: blue;"></div>
     </section>
 
-    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="songsSection">
-        <h1 id="pageTitle">All Songs</h1>
-        <div id="songsDiv" style="color: blue;"></div>
-    </section>
+    
 
     <script defer>
         let errorList = new Set();
@@ -340,6 +342,23 @@
             }
         }
 
+        async function removePlaylistEntry(playlistEntryId) {
+            let formData = new FormData();
+            formData.append('method', 'removePlaylistEntry');
+            formData.append('userName', currentUsername);
+            formData.append('password', currentPassword);
+            formData.append('playlistEntryId', playlistEntryId);
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/playlistController.php", {
+                method: 'POST',
+                body: formData
+            });
+            response = await response.json();
+
+            if (response == "successfullyRemoved") {
+                document.querySelector(`#playlistEntry-${playlistEntryId}`).remove();
+            }
+        }
+
         function logOut() {
             loggedIn = false;
             currentUsername = "";
@@ -411,6 +430,12 @@
             playlistEntry.id = `playlistEntry-${row.id}`;
             playlistEntry.innerText = `${row.artist} - ${row.name}`;
 
+            let removeBtn = document.createElement("button");
+            removeBtn.innerText = "Remove";
+            removeBtn.style.float = "right";
+            removeBtn.onclick = () => removePlaylistEntry(row.id);
+
+            playlistEntry.appendChild(removeBtn);
             playlistEntriesDiv.appendChild(playlistEntry);
         }
 
