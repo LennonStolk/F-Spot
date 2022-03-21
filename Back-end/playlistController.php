@@ -64,6 +64,31 @@ elseif ($method == "getPlaylistEntries") {
 
     getPlaylistEntries($db, $userName, $playlistId);
 }
+elseif ($method == "addPlaylistEntry") {
+    $userName = isset($_POST["userName"]) ? $_POST["userName"] : null;
+    $password = isset($_POST["password"]) ? $_POST["password"] : null;
+    $playlistId = isset($_POST["playlistId"]) ? $_POST["playlistId"] : null;
+    $songId = isset($_POST["songId"]) ? $_POST["songId"] : null;
+
+    if (authenticate($db, $userName, $password) == false) {
+        echo(json_encode('authenticationFailed'));
+        die();
+    }
+
+    addPlaylistEntry($db, $userName, $playlistId, $songId);
+}
+elseif ($method == "removePlaylistEntry") {
+    $userName = isset($_POST["userName"]) ? $_POST["userName"] : null;
+    $password = isset($_POST["password"]) ? $_POST["password"] : null;
+    $playlistEntryId = isset($_POST["playlistEntryId"]) ? $_POST["playlistEntryId"] : null;
+
+    if (authenticate($db, $userName, $password) == false) {
+        echo(json_encode('authenticationFailed'));
+        die();
+    }
+
+    removePlaylistEntry($db, $userName, $playlistEntryId);
+}
 
 function createPlaylist($db, $userName, $playlistName) {
     // Check conditions
@@ -122,7 +147,7 @@ function removePlaylist($db, $userName, $id) {
     // Get id from user
     $userId = getIdFromUserName($db, $userName);
 
-    // Get playlists
+    // Remove playlist
     $sql = 'DELETE FROM fspot_playlists WHERE userId = :userId AND id = :id';
     $vars = [
         "userId" => $userId,
@@ -139,7 +164,7 @@ function getPlaylistEntries($db, $userName, $playlistId) {
     // Get id from user
     $userId = getIdFromUserName($db, $userName);
 
-    // Get playlists
+    // Get playlist entries
     $sql = 'SELECT e.id, e.songId, e.playlistId, s.name, s.artist, s.album, s.src
             FROM fspot_playlist_entries e              
             INNER JOIN fspot_songs s ON s.id = e.songId
@@ -153,6 +178,48 @@ function getPlaylistEntries($db, $userName, $playlistId) {
     $result = $stmt->fetchAll();
 
     echo(json_encode($result));
+    die();
+}
+
+function addPlaylistEntry($db, $userName, $playlistId, $songId) {
+    // Get id from user
+    $userId = getIdFromUserName($db, $userName);
+
+    // Insert playlist entry into database
+    $sql = 'INSERT INTO fspot_playlist_entries (playlistId, userId, songId) VALUES (:playlistId, :userId, :songId);';
+    $vars = [
+        "playlistId" => $playlistId,
+        "userId" => $userId,
+        "songId" => $songId,
+    ];
+    $stmt = $db->prepare($sql);
+    $stmt->execute($vars);
+
+    // Get inserted playlist entry
+    $sql = 'SELECT * FROM fspot_playlist_entries WHERE id = :id';
+    $vars = ["id" => $db->lastInsertId()];
+    $stmt = $db->prepare($sql);
+    $stmt->execute($vars);
+    $result = $stmt->fetch();
+
+    echo(json_encode($result));
+    die();
+}
+
+function removePlaylistEntry($db, $userName, $id) {
+    // Get id from user
+    $userId = getIdFromUserName($db, $userName);
+
+    // Remove playlist entry
+    $sql = 'DELETE FROM fspot_playlist_entries WHERE userId = :userId AND id = :id';
+    $vars = [
+        "userId" => $userId,
+        "id" => $id,
+    ];
+    $stmt = $db->prepare($sql);
+    $stmt->execute($vars);
+
+    echo(json_encode("successfullyRemoved"));
     die();
 }
 
