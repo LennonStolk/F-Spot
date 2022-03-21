@@ -52,6 +52,18 @@ elseif ($method == "removePlaylist") {
 
     removePlaylist($db, $userName, $playlistId);
 }
+elseif ($method == "getPlaylistEntries") {
+    $userName = isset($_POST["userName"]) ? $_POST["userName"] : null;
+    $password = isset($_POST["password"]) ? $_POST["password"] : null;
+    $playlistId = isset($_POST["playlistId"]) ? $_POST["playlistId"] : null;
+
+    if (authenticate($db, $userName, $password) == false) {
+        echo(json_encode('authenticationFailed'));
+        die();
+    }
+
+    getPlaylistEntries($db, $userName, $playlistId);
+}
 
 function createPlaylist($db, $userName, $playlistName) {
     // Check conditions
