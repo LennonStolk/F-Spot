@@ -196,7 +196,10 @@ function addPlaylistEntry($db, $userName, $playlistId, $songId) {
     $stmt->execute($vars);
 
     // Get inserted playlist entry
-    $sql = 'SELECT * FROM fspot_playlist_entries WHERE id = :id';
+    $sql = 'SELECT e.id, e.songId, e.playlistId, s.name, s.artist, s.album, s.src
+            FROM fspot_playlist_entries e              
+            INNER JOIN fspot_songs s ON s.id = e.songId
+            WHERE e.id = :id';
     $vars = ["id" => $db->lastInsertId()];
     $stmt = $db->prepare($sql);
     $stmt->execute($vars);

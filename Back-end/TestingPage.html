@@ -66,7 +66,7 @@
         let loggedIn = false;
         let currentUsername = "";
         let currentPassword = "";
-        let currentPlaylistId;
+        let currentPlaylistId = null;
         setUpValidation();
 
 
@@ -190,6 +190,8 @@
         }
 
         async function logIn() {
+            await logOut();
+
             let userName = document.querySelector("#loginUsername").value;
             let password = document.querySelector("#loginPassword").value;
             
@@ -289,7 +291,7 @@
             }
         }
 
-        async function selectPlaylist(playlistId) {
+        async function selectPlaylist(playlistId, playlistName) {
             // Set current playlist global
             currentPlaylistId = playlistId;
 
@@ -304,6 +306,7 @@
             });
             response = await response.json();
 
+            document.querySelector("#playlistEntriesSection").querySelector("h1").innerText = `Playlist: "${playlistName}"`;
             document.querySelector("#playlistEntriesSection").style.display = "block";
             if (Array.isArray(response)) {
                 document.querySelector("#playlistEntriesDiv").innerHTML = "";
@@ -312,14 +315,41 @@
                 });
             }
         }
+        
+        async function addPlaylistEntry(songId) {
+            if (currentPlaylistId == null) {
+                return;
+            }
+
+            let playlistName = document.querySelector("#addPlaylistName").value;
+            
+            let formData = new FormData();
+            formData.append('method', 'addPlaylistEntry');
+            formData.append('userName', currentUsername);
+            formData.append('password', currentPassword);
+            formData.append('playlistId', currentPlaylistId);
+            formData.append('songId', songId);
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/playlistController.php", {
+                method: 'POST',
+                body: formData
+            });
+            response = await response.json();
+
+            if (typeof response === "object" && response !== null) {
+                displayPlaylistEntryRow(response);
+            }
+        }
 
         function logOut() {
             loggedIn = false;
             currentUsername = "";
             currentPassword = "";
+            currentPlaylistId = null;
             document.querySelector("#logInStatusDiv").innerText = "";
             document.querySelector("#playlistsSection").style.display = "none";
             document.querySelector("#playlistsDiv").innerHTML = "";
+            document.querySelector("#playlistEntriesSection").style.display = "none";
+            document.querySelector("#playlistEntriesDiv").innerHTML = "";
             document.querySelector("#songsSection").style.display = "none";
             document.querySelector("#songsDiv").innerHTML = "";
         }
@@ -343,7 +373,7 @@
             let selectBtn = document.createElement("button");
             selectBtn.innerText = "Select";
             selectBtn.style.float = "right";
-            selectBtn.onclick = () => selectPlaylist(row.id);
+            selectBtn.onclick = () => selectPlaylist(row.id, row.name);
 
             playlist.appendChild(deleteBtn);
             playlist.appendChild(selectBtn);
@@ -355,12 +385,18 @@
 
             let song = document.createElement("div");
             song.style.padding = "3px";
-            song.style.border = "1px solid black";
+            song.style.border = "1px solid teal";
             song.style.margin = "2px";
-            song.style.color = "black";
+            song.style.color = "teal";
             song.id = `song-${row.id}`;
             song.innerText = `${row.artist} - ${row.name}`;
 
+            let addBtn = document.createElement("button");
+            addBtn.innerText = "Add";
+            addBtn.style.float = "right";
+            addBtn.onclick = () => addPlaylistEntry(row.id);
+
+            song.appendChild(addBtn);
             songsDiv.appendChild(song);
         }
 
@@ -369,10 +405,10 @@
 
             let playlistEntry = document.createElement("div");
             playlistEntry.style.padding = "3px";
-            playlistEntry.style.border = "1px solid black";
+            playlistEntry.style.border = "1px solid purple";
             playlistEntry.style.margin = "2px";
-            playlistEntry.style.color = "black";
-            playlistEntry.id = `song-${row.id}`;
+            playlistEntry.style.color = "purple";
+            playlistEntry.id = `playlistEntry-${row.id}`;
             playlistEntry.innerText = `${row.artist} - ${row.name}`;
 
             playlistEntriesDiv.appendChild(playlistEntry);
