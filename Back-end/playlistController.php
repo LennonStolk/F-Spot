@@ -123,6 +123,24 @@ function removePlaylist($db, $userName, $id) {
     die();
 }
 
+function getPlaylistEntries($db, $userName, $playlistId) {
+    // Get id from user
+    $userId = getIdFromUserName($db, $userName);
+
+    // Get playlists
+    $sql = 'SELECT * FROM fspot_playlist_entries WHERE userId = :userId AND playlistId = :playlistId';
+    $vars = [
+        "userId" => $userId,
+        "playlistId" => $playlistId,
+    ];
+    $stmt = $db->prepare($sql);
+    $stmt->execute($vars);
+    $result = $stmt->fetchAll();
+
+    echo(json_encode($result));
+    die();
+}
+
 function getIdFromUserName($db, $userName) {
     $sql = 'SELECT id FROM fspot_users WHERE username = :userName';
     $vars = ["userName" => $userName];
