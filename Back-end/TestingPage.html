@@ -51,6 +51,11 @@
         <div id="playlistsDiv" style="color: blue;"></div>
     </section>
 
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="playlistEntriesSection">
+        <h1 id="pageTitle">Playlist entries</h1>
+        <div id="playlistEntriesDiv" style="color: blue;"></div>
+    </section>
+
     <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="songsSection">
         <h1 id="pageTitle">All Songs</h1>
         <div id="songsDiv" style="color: blue;"></div>
@@ -61,6 +66,7 @@
         let loggedIn = false;
         let currentUsername = "";
         let currentPassword = "";
+        let currentPlaylistId;
         setUpValidation();
 
 
@@ -283,6 +289,30 @@
             }
         }
 
+        async function selectPlaylist(playlistId) {
+            // Set current playlist global
+            currentPlaylistId = playlistId;
+
+            let formData = new FormData();
+            formData.append('method', 'getPlaylistEntries');
+            formData.append('userName', currentUsername);
+            formData.append('password', currentPassword);
+            formData.append('playlistId', currentPlaylistId);
+            let response = await fetch("http://lennonstolk.nl/apis/F-Spot/playlistController.php", {
+                method: 'POST',
+                body: formData
+            });
+            response = await response.json();
+
+            document.querySelector("#playlistEntriesSection").style.display = "block";
+            if (Array.isArray(response)) {
+                document.querySelector("#playlistEntriesDiv").innerHTML = "";
+                response.forEach((row) => {
+                    displayPlaylistEntryRow(row);
+                });
+            }
+        }
+
         function logOut() {
             loggedIn = false;
             currentUsername = "";
@@ -310,7 +340,13 @@
             deleteBtn.style.float = "right";
             deleteBtn.onclick = () => removePlaylist(row.id);
 
+            let selectBtn = document.createElement("button");
+            selectBtn.innerText = "Select";
+            selectBtn.style.float = "right";
+            selectBtn.onclick = () => selectPlaylist(row.id);
+
             playlist.appendChild(deleteBtn);
+            playlist.appendChild(selectBtn);
             playlistsDiv.appendChild(playlist);
         }
 
@@ -326,6 +362,20 @@
             song.innerText = `${row.artist} - ${row.name}`;
 
             songsDiv.appendChild(song);
+        }
+
+        function displayPlaylistEntryRow(row) {
+            let playlistEntriesDiv = document.querySelector("#playlistEntriesDiv");
+
+            let playlistEntry = document.createElement("div");
+            playlistEntry.style.padding = "3px";
+            playlistEntry.style.border = "1px solid black";
+            playlistEntry.style.margin = "2px";
+            playlistEntry.style.color = "black";
+            playlistEntry.id = `song-${row.id}`;
+            playlistEntry.innerText = `${row.artist} - ${row.name}`;
+
+            playlistEntriesDiv.appendChild(playlistEntry);
         }
 
         function updateErrorList() {

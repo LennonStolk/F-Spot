@@ -140,7 +140,10 @@ function getPlaylistEntries($db, $userName, $playlistId) {
     $userId = getIdFromUserName($db, $userName);
 
     // Get playlists
-    $sql = 'SELECT * FROM fspot_playlist_entries WHERE userId = :userId AND playlistId = :playlistId';
+    $sql = 'SELECT e.id, e.songId, e.playlistId, s.name, s.artist, s.album, s.src
+            FROM fspot_playlist_entries e              
+            INNER JOIN fspot_songs s ON s.id = e.songId
+            WHERE e.userId = :userId AND e.playlistId = :playlistId';
     $vars = [
         "userId" => $userId,
         "playlistId" => $playlistId,
