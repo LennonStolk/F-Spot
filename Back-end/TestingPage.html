@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body style="margin: 0; width: 100vw; height: 100vh; display: flex; flex-flow: column wrap; place-content: start;">
+<body style="margin: 0; width: 100vw; height: 100vh; display: flex; flex-flow: column wrap; place-content: start; background-color: #bec1c4;">
 
-    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px;">
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; background-color: #282e30; border-radius: 10px;">
         <img src="f-spot logo white.svg" width="400px" alt="">
     </section>
 
-    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px;">
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; background-color: #bad3c4; border-radius: 10px;">
         <h1 id="pageTitle">Log In</h1>
         <form class="basicForm" id="logInForm" onsubmit="event.preventDefault();">
             <label for="userName">Username:</label>
@@ -25,7 +25,7 @@
         <h4 id="logInStatusDiv" style="color: green;"></h4>
     </section>
     
-    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px;">
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; background-color: #ddc7c7; border-radius: 10px;">
         <h1 id="pageTitle">Sign Up</h1>
         <form class="basicForm" id="signUpForm" action="http://lennonstolk.nl/apis/F-Spot/userController.php" method="post">
             <label for="userName">Username:</label>
@@ -40,12 +40,12 @@
         <div id="errorDiv" style="color: red;"></div>
     </section>
 
-    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="songsSection">
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none; background-color: #bed6db; border-radius: 10px;" id="songsSection">
         <h1 id="pageTitle">All Songs</h1>
         <div id="songsDiv" style="color: blue;"></div>
     </section>
 
-    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="playlistsSection">
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none; background-color: #bec1db; border-radius: 10px;" id="playlistsSection">
         <h1 id="pageTitle">Your Playlists</h1>
         <form class="basicForm" id="logInForm" onsubmit="event.preventDefault();">
             <label for="userName">Playlist name:</label>
@@ -56,7 +56,7 @@
         <div id="playlistsDiv" style="color: blue;"></div>
     </section>
 
-    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none;" id="playlistEntriesSection">
+    <section style="border: 1px solid black; margin: 15px; padding: 20px; width: 400px; display: none; background-color: #dbbed2; border-radius: 10px;" id="playlistEntriesSection">
         <h1 id="pageTitle">Playlist Entries</h1>
         <div id="playlistEntriesDiv" style="color: blue;"></div>
     </section>
