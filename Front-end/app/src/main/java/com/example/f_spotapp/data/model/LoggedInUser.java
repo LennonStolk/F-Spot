@@ -5,19 +5,19 @@ package com.example.f_spotapp.data.model;
  */
 public class LoggedInUser {
 
-    private String userId;
     private String displayName;
+    private String password;
 
-    public LoggedInUser(String userId, String displayName) {
-        this.userId = userId;
+    public LoggedInUser(String displayName, String password) {
         this.displayName = displayName;
-    }
-
-    public String getUserId() {
-        return userId;
+        this.password = password;
     }
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
