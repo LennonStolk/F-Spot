@@ -100,10 +100,6 @@ function createPlaylist($db, $userName, $playlistName) {
         echo(json_encode('emptyFields'));
         die();
     }
-    elseif (checkLegalCharacters($userName, "abcdefghijklmnopqrstuvwxyz1234567890_-") == false) {
-        echo(json_encode('illegalCharacters'));
-        die();
-    }
 
     // Get id from user
     $userId = getIdFromUserName($db, $userName);
