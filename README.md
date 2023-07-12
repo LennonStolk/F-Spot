@@ -1,4 +1,4 @@
-![image](https://github.com/LennonStolk/F-Spot/assets/70744566/9f042172-7637-4e86-8cda-f1c6b19a5276)# F-Spot 🎼
+# F-Spot 🎼
 
 F-Spot is an music playlist list app that I made using **React Native**, **MySQL** and **PHP**.
 
